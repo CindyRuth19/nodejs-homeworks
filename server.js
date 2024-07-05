@@ -4,10 +4,10 @@ import { app } from "./app.js";
 
 dotenv.config();
 
-const { MY_MONGODB_URI, PORT = 3001 } = process.env;
+const { DB_HOST, PORT = 3000 } = process.env;
 
 mongoose
-  .connect(MY_MONGODB_URI)
+  .connect(DB_HOST)
   .then(() => {
     app.listen(PORT, () =>
       console.log(`Server running. Use our API on port: ${PORT}`)
