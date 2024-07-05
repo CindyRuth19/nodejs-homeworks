@@ -4,12 +4,15 @@ import {
   favoriteValidation,
 } from "../validations/validation.js";
 import { httpError } from "../helpers/httpError.js";
-//import { exit } from "node:process";
 
-//exit(1);
+const getAllContacts = async (req, res) => {
+  const { page = 1, limit = 20, favorite } = req.query;
+  const query = favorite ? { favorite: true } : {};
 
-const getAllContacts = async (_req, res) => {
-  const result = await Contact.find();
+  const result = await Contact.find(query)
+    .skip((page - 1) * limit)
+    .limit(parseInt(limit));
+
   res.json(result);
 };
 
@@ -30,7 +33,6 @@ const deleteContactById = async (req, res) => {
 
   if (!result) {
     throw httpError(404, "😡");
-    //return process.exit(1);
   }
   res.json({ message: "Contact deleted🗑️" });
 };
@@ -40,6 +42,7 @@ const addContact = async (req, res) => {
   if (error) {
     throw httpError(400, "missing required field");
   }
+
   const result = await Contact.create(req.body);
   res.status(201, "Contact successfully added🎉").json(result);
 };
@@ -59,7 +62,7 @@ const updateContactById = async (req, res) => {
     throw httpError(404, "😡");
   }
   //res.json(result);
-  res.status(201).json(result);
+  res.status(201, "update successful🎉").json(result);
 };
 
 const updateStatusContact = async (req, res) => {

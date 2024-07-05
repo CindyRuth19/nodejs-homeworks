@@ -4,16 +4,17 @@ import { app } from "./app.js";
 
 dotenv.config();
 
-const {DB_HOST, PORT = 3000 } = process.env;
+const { MY_MONGODB_URI, PORT = 3001 } = process.env;
 
 mongoose
-  .connect(DB_HOST)
+  .connect(MY_MONGODB_URI)
   .then(() => {
     app.listen(PORT, () =>
       console.log(`Server running. Use our API on port: ${PORT}`)
     );
     console.log("Database connect successful");
   })
-  .catch((err) =>
-    console.log(`Server not running. Error message: ${err.message}`)
-  );
+  .catch((err) => {
+    console.log(`Server not running. Error message: ${err.message}`);
+    process.exit(1);
+  });
