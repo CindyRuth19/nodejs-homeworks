@@ -1,7 +1,7 @@
 import request from "supertest";
 import { app } from "../app.js";
 import { User } from "../models/usersModel.js";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { jest } from "@jest/globals";
 
@@ -20,7 +20,7 @@ describe("Test @POST /api/users/login", () => {
   };
 
   beforeAll(() => {
-    //Mock User.findOne
+    // Mock User.findOne
     jest.spyOn(User, "findOne").mockImplementation(({ email }) => {
       if (email === signInData.email) {
         return Promise.resolve(mockUser);
@@ -64,18 +64,18 @@ describe("Test @POST /api/users/login", () => {
     console.log("Response body:", response.body);
     console.log("Response body USER:", response.body.user);
 
-    //status code response
+    // Response must have status code 200
     expect(response.status).toBe(200);
 
-    // token returned in the response
+    // The token must be returned in the response
     expect(response.body).toHaveProperty("token", "mockJwtToken");
 
     const { user } = response.body;
 
-    // the response returning a user object with 2 fields email and and subscription
+    // The response should return a user object with 2 fields email and subscription
     expect(user).toHaveProperty("email" && "subscription");
 
-    //email and subscription having the data type string
+    // email and subscription, having the data type String
     expect(user.email && user.subscription).toEqual(expect.any(String));
   });
 });

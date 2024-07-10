@@ -1,71 +1,56 @@
 import express from "express";
-import { controlWrapper } from "../../helpers/controlWrapper.js";
-import {
-  signupUser,
-  loginUser,
-  logoutUser,
-  getCurrentUsers,
-  updateUserSubscription,
-  updateAvatar,
-} from "../../controllers/usersController.js";
+import { ctrlWrapper } from "../../helpers/ctrlWrapper.js";
+// prettier-ignore
+import { signupUser, loginUser, logoutUser, getCurrentUsers, updateUserSubscription, updateAvatar, verifyEmail, resendVerifyEmail} from "../../controllers/usersController.js";
 import { authenticateToken } from "../../middlewares/authenticateToken.js";
 import { upload } from "../../middlewares/upload.js";
 
 const router = express.Router();
 
-router.post("/signup", controlWrapper(signupUser));
-/* POST: http://localhost:3000/api/users/signup
+/* POST: // http://localhost:3000/api/users/signup
 {
-    "email": "cindy@email.com",
-    "password": "cindypassword"
+  "email": "example@example.com",
+  "password": "examplepassword"
 }
 */
+router.post("/signup", ctrlWrapper(signupUser));
 
-router.post("/login", controlWrapper(loginUser));
 /* POST: // http://localhost:3000/api/users/login
 {
-    "email": "scarlett@example.com",
-    "password": "scarlett777pass"
+  "email": "example@example.com",
+  "password": "examplepassword"
 }
 */
+router.post("/login", ctrlWrapper(loginUser));
 
-router.get("/logout", authenticateToken, controlWrapper(logoutUser));
-/* GET: // http://localhost:3000/api/users/logout 
+/* GET: // http://localhost:3000/api/users/logout */
+router.get("/logout", authenticateToken, ctrlWrapper(logoutUser));
+
+/* GET: // http://localhost:3000/api/users/current */
+router.get("/current", authenticateToken, ctrlWrapper(getCurrentUsers));
+
+/* PATCH: // http://localhost:3000/api/users/
 {
-    "email": "scarlett@example.com",
-    "password": "scarlett777pass"
+    "subscription":"pro"
 }
-Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2NTVkM2U2NjJlM2YxYmE5MDc4ODY4NyIsImlhdCI6MTcxNzQxNzgxNCwiZXhwIjoxNzE3NTAwNjE0fQ.KIQ5-XgC8zo-tDccY1NTFrVUwjCK3z7xGl0YutAYbps
-
 */
+router.patch("/", authenticateToken, ctrlWrapper(updateUserSubscription));
 
-router.get("/current", authenticateToken, controlWrapper(getCurrentUsers));
-/* GET: // http://localhost:3000/api/users/current
-
-headers/authorization/Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2NTg3MzhlNjA5ZWZiYmEwNjlkYTkwNiIsImlhdCI6MTcxNzQyMzM1NywiZXhwIjoxNzE3NTA2MTU3fQ.RL8wCyGrzyFpl_4NnAaZrxtimLyJfQj7S7wyjtRYUdI
-
+/* PATCH: // http://localhost:3000/api/users/avatars
+    form-data
+    avatar,file : image
 */
+// prettier-ignore
+router.patch("/avatars", authenticateToken, upload.single("avatar"), ctrlWrapper(updateAvatar));
 
-router.patch("/", authenticateToken, controlWrapper(updateUserSubscription));
-/* PATCH: // http://localhost:3000/api/users 
-    body
-    {
-        "subscription": "business"
-    }
+/* GET: // http://localhost:3000/api/users/verify/:verificationToken */
+router.get("/verify/:verificationToken", ctrlWrapper(verifyEmail));
 
-    headers/authorization/Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2NTVkM2U2NjJlM2YxYmE5MDc4ODY4NyIsImlhdCI6MTcxNzQyMDkwMSwiZXhwIjoxNzE3NTAzNzAxfQ.1T0Tn5244rQG03Xn0lELnvovqvQZpo5fOCXjD4rJwjk
+/* POST: // http://localhost:3000/api/users/verify 
+{
+  "email": "example@example.com",
+}
 */
-
-router.patch(
-  "/avatars",
-  authenticateToken,
-  upload.single("avatar"),
-  controlWrapper(updateAvatar)
-);
-/*
-PATCH: http://localhost:3005/api/users/avatars
-form-data
-avatar, file: image
-*/
+router.post("/verify", authenticateToken, ctrlWrapper(resendVerifyEmail));
 
 export { router };

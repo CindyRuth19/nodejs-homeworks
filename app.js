@@ -13,8 +13,7 @@ app.use(cors());
 app.use(express.json());
 
 // tells Express to serve static files from the public directory)
-// open http://localhost:3000/avatars/66894ab20c47335ed9c556a2.jpg on browser
-
+// open http://localhost:3000/avatars/66894ab20c47335ed9c556a2.jpeg on browser
 app.use(express.static("public"));
 
 app.use("/api/contacts", contactsRouter);

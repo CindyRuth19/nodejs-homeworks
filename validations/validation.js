@@ -1,13 +1,13 @@
 import Joi from "joi";
 
-//define validation for adding and updating a contact
+// validation for adding/updating a contact
 const contactValidation = Joi.object({
   name: Joi.string().required(),
   email: Joi.string().required(),
   phone: Joi.string().required(),
 });
 
-//define validation for updating favorite field
+// validation for updating favorite field
 const favoriteValidation = Joi.object({
   favorite: Joi.bool().required(),
 });
@@ -24,17 +24,25 @@ const signupValidation = Joi.object({
   password: Joi.string().min(6).max(16).required().messages({
     "any.required": "Missing required password field",
     "string.min": "Password must be at least {#limit} characters long",
-    "string.max": "Password must not exceed {#limit} characters",
+    "string.max": "Password cannot be longer than {#limit} characters",
   }),
 });
 
+// validation for subscription
 const subscriptionValidation = Joi.object({
   subscription: Joi.string().valid("starter", "pro", "business"),
 });
 
-export {
-  contactValidation,
-  favoriteValidation,
-  signupValidation,
-  subscriptionValidation,
-};
+// validation for email
+const emailValidation = Joi.object({
+  email: Joi.string()
+    .email({ minDomainSegments: 2, tlds: { allow: ["com", "net"] } })
+    .required()
+    .messages({
+      "any.required": "Missing required email field",
+      "string.email": "Invalid email format",
+    }),
+});
+
+// prettier-ignore
+export { contactValidation, favoriteValidation, signupValidation, subscriptionValidation, emailValidation };
